@@ -7,6 +7,8 @@ package wang.blair.Personbook;
 
 import java.time.MonthDay;
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -20,6 +22,10 @@ public class Person {
     private boolean newContactNotYetSaved = false;
     private MonthDay bdayMonthDay;
     private Year birthdayYear;
+    
+    // TIP: each Person starts with an empty list of case notes, rather than a null for the entire case notes property!
+    private List<CaseNote> caseNotes = new ArrayList<>();
+
 
     @Override
     public String toString() {
@@ -38,59 +44,66 @@ public class Person {
         this.fullName = fullName;
     }
 
-    public Person(String fullName, boolean importantPersonal, boolean importantBusiness, MonthDay bdayMonthDay, Year birthdayYear) {
-        this.fullName = fullName;
-        this.importantPersonal = importantPersonal;
-        this.importantBusiness = importantBusiness;
-        this.bdayMonthDay = bdayMonthDay;
-        this.birthdayYear = birthdayYear;
+    public void addCaseNote(CaseNote cn) {
+        this.caseNotes.add(cn);
     }
-
+    
+    
+    // ALL THE GETTERS
+    
     public String getFullName() {
         return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     public boolean isImportantPersonal() {
         return importantPersonal;
     }
 
-    public void setImportantPersonal(boolean importantPersonal) {
-        this.importantPersonal = importantPersonal;
-    }
-
     public boolean isImportantBusiness() {
         return importantBusiness;
-    }
-
-    public void setImportantBusiness(boolean importantBusiness) {
-        this.importantBusiness = importantBusiness;
-    }
-
-    public MonthDay getBdayMonthDay() {
-        return bdayMonthDay;
-    }
-
-    public void setBdayMonthDay(MonthDay bdayMonthDay) {
-        this.bdayMonthDay = bdayMonthDay;
-    }
-
-    public Year getBirthdayYear() {
-        return birthdayYear;
-    }
-
-    public void setBirthdayYear(Year birthdayYear) {
-        this.birthdayYear = birthdayYear;
     }
 
     public boolean isNewContactNotYetSaved() {
         return newContactNotYetSaved;
     }
 
+    public MonthDay getBdayMonthDay() {
+        return bdayMonthDay;
+    }
+
+    public Year getBirthdayYear() {
+        return birthdayYear;
+    }
+
+    public List<CaseNote> getCaseNotes() {
+        return caseNotes;
+    }
+    
+    // ALL THE SETTERS
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setImportantPersonal(boolean importantPersonal) {
+        this.importantPersonal = importantPersonal;
+    }
+
+    public void setImportantBusiness(boolean importantBusiness) {
+        this.importantBusiness = importantBusiness;
+    }
+
     public void setNewContactNotYetSaved(boolean newContactNotYetSaved) {
         this.newContactNotYetSaved = newContactNotYetSaved;
     }
+
+    public void setBdayMonthDay(MonthDay bdayMonthDay) {
+        this.bdayMonthDay = bdayMonthDay;
+    }
+
+    public void setBirthdayYear(Year birthdayYear) {
+        this.birthdayYear = birthdayYear;
+    }
+    
+    
 }

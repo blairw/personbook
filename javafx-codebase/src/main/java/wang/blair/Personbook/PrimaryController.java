@@ -4,8 +4,10 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -16,14 +18,18 @@ public class PrimaryController {
     @FXML public Label lblStatusBar;
     @FXML public Button btnNew;
     @FXML public Button btnSave;
+    @FXML public Button btnNewCaseNote;
+    @FXML public Button btnSaveCaseNote;
     @FXML public ToggleButton btnView;
     @FXML public ToggleButton btnEdit;
     @FXML public TextField txtFullName;
     @FXML public TextField txtBdayDay;
     @FXML public TextField txtBdayMonth;
     @FXML public TextField txtBdayYear;
+    @FXML public TextArea txtCaseNotes;
     @FXML public CheckBox chkPersonal;
     @FXML public CheckBox chkBusiness;
+    @FXML public ChoiceBox choiceBoxForCaseNotes;
     
     public Person currentlySelectedPerson;
     public boolean changesHaveBeenMade;
@@ -53,9 +59,11 @@ public class PrimaryController {
     
     private void setupButtonIcons() {
         HelperForJavafx.setupIconForButton(btnNew, "Farm-Fresh_add.png");
+        HelperForJavafx.setupIconForButton(btnNewCaseNote, "Farm-Fresh_add.png");
         HelperForJavafx.setupIconForButton(btnEdit, "Farm-Fresh_pencil.png");
         HelperForJavafx.setupIconForButton(btnView, "Farm-Fresh_vcard.png");
         HelperForJavafx.setupIconForButton(btnSave, "Farm-Fresh_diskette.png");
+        HelperForJavafx.setupIconForButton(btnSaveCaseNote, "Farm-Fresh_diskette.png");
     }
     
     private void setupSampleData() {
@@ -107,10 +115,26 @@ public class PrimaryController {
         // if save button was visible from before, it should be invisible now
         btnSave.setVisible(false);
         
+        // set name if available
+        // TIP: always do null != <value to check> rather than the other way around!
         if (null != selectedPerson.getFullName()) {
             txtFullName.setText(selectedPerson.getFullName());
         } else {
             txtFullName.setText("");
+        }
+        
+        // TIP: to clear previous case notes, use clear(), not removeAll().
+        choiceBoxForCaseNotes.getItems().clear();
+        if (selectedPerson.getCaseNotes().size() > 0) {
+            choiceBoxForCaseNotes.setDisable(false);
+            txtCaseNotes.setDisable(false);
+            
+            for (CaseNote cn : selectedPerson.getCaseNotes()) {
+                choiceBoxForCaseNotes.getItems().add(cn);
+            }
+        } else {
+            choiceBoxForCaseNotes.setDisable(true);
+            txtCaseNotes.setDisable(true);
         }
     }
     

@@ -16,7 +16,10 @@ public class HelperForData {
     public static List<Person> generateSamplePersonRecords() {
         List<Person> people = new ArrayList<>();
         
-        people.add(new Person("Andrew Bob"));
+        Person person1 = new Person("Andrew Bob");
+        person1.addCaseNote(new CaseNote("This case note was created at the time of program execution! :)"));
+        people.add(person1);
+        
         people.add(new Person("Charlie Dennis"));
         people.add(new Person("Evan Foucault"));
         people.add(new Person("Gary Habermas"));

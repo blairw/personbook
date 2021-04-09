@@ -2,15 +2,18 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -30,11 +33,11 @@
       <ListView fx:id="myListView" prefHeight="560.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </left>
    <center>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="200.0" BorderPane.alignment="CENTER">
          <children>
             <VBox layoutX="23.0" layoutY="27.0" spacing="20.0">
                <children>
-                  <VBox spacing="10.0">
+                  <VBox prefHeight="55.0" prefWidth="314.0" spacing="10.0">
                      <children>
                         <Label text="Full Name">
                            <font>
@@ -65,13 +68,30 @@
                   </VBox>
                   <VBox spacing="10.0">
                      <children>
-                        <Label text="Relationship type">
+                        <Label text="Relationship Type">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </Label>
                         <CheckBox fx:id="chkPersonal" disable="true" mnemonicParsing="false" text="Important for personal reasons" />
                         <CheckBox fx:id="chkBusiness" disable="true" mnemonicParsing="false" text="Important for business reasons" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label text="Case Notes">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <HBox spacing="10.0">
+                           <children>
+                              <ChoiceBox fx:id="choiceBoxForCaseNotes" prefHeight="25.0" prefWidth="185.0" />
+                              <Button fx:id="btnNewCaseNote" mnemonicParsing="false" text="New" />
+                              <Button fx:id="btnSaveCaseNote" mnemonicParsing="false" text="Save" />
+                           </children>
+                        </HBox>
+                        <TextArea fx:id="txtCaseNotes" prefWidth="200.0" />
                      </children>
                   </VBox>
                </children>
