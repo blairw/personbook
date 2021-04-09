@@ -104,7 +104,7 @@
          <top>
             <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <items>
-                  <ToggleButton fx:id="btnView" mnemonicParsing="false" onAction="#userDidClickView" selected="true" text="View" />
+                  <ToggleButton fx:id="btnView" mnemonicParsing="false" selected="true" text="View" />
                   <ToggleButton fx:id="btnEdit" mnemonicParsing="false" onAction="#userDidClickEdit" text="Edit" />
                   <Separator orientation="VERTICAL" />
                   <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#userDidClickCancel" text="Cancel" />

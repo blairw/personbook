@@ -92,7 +92,6 @@ public class PrimaryController {
                 if (proceedWithDestructiveChange){
                     // remove current item - only for case where we are creating new record
                     if (this.currentlySelectedPerson.isNewContactNotYetSaved()) {
-                        myListView.getItems().remove(currentlySelectedPerson);
                     }
                 
                     // complete the selection change
@@ -118,6 +117,9 @@ public class PrimaryController {
         Person person = new Person();
         myListView.getItems().add(person);
         myListView.getSelectionModel().select(person);
+        
+        btnEdit.setSelected(true);
+        this.userDidClickEdit();
     }
     
     
@@ -150,17 +152,15 @@ public class PrimaryController {
         // disable save button for next edit mode
         btnSave.setDisable(true);
         btnView.setSelected(true);
+        
+        if (this.currentlySelectedPerson.isNewContactNotYetSaved()) {
+            myListView.getItems().remove(currentlySelectedPerson);
+        }
     }
-    
     
     @FXML
     private void userDidClickEdit() {
         this.setPersonDetailsEditMode(true);
-    }
-    
-    @FXML
-    private void userDidClickView() {
-        this.setPersonDetailsEditMode(false);
     }
     
     @FXML
