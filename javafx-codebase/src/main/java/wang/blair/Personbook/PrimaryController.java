@@ -67,41 +67,34 @@ public class PrimaryController {
 
     @FXML
     private void userDidSelectListItem(Person selectedPerson) {
-        boolean weShouldContinue = true;
-        if (selectedPerson == this.currentlySelectedPerson) {
-            // no action required because
-            // user selected the same person who is already selected!
-            weShouldContinue = false;
+        // if save button was visible from before, it should be invisible now
+        HelperForJavafx.setNodeHidden(btnSave, true);
+        
+        // set name if available
+        // TIP: always do null != <value to check> rather than the other way around!
+        if (null != selectedPerson.getFullName()) {
+            txtFullName.setText(selectedPerson.getFullName());
+        } else {
+            txtFullName.setText("");
         }
         
-        if (weShouldContinue) {
-            boolean continuingWouldCauseDataLoss = false;
-            if (this.currentlySelectedPerson.isNewContactNotYetSaved()) {
-                continuingWouldCauseDataLoss = true;
-            }
-            if (this.changesMadeToPersonRecord) {
-                continuingWouldCauseDataLoss = true;
-            }
-            
-            if (!continuingWouldCauseDataLoss) {
-                // go ahead and change it, there is no data loss
-                this.changeSelectionToPerson(selectedPerson);
-            } else {
-                boolean proceedWithDestructiveChange = HelperForJavafx.confirmDiscardEditChanges();
-                
-                if (proceedWithDestructiveChange){
-                    // remove current item - only for case where we are creating new record
-                    if (this.currentlySelectedPerson.isNewContactNotYetSaved()) {
-                    }
-                
-                    // complete the selection change
-                    this.changeSelectionToPerson(selectedPerson);
-                } else {
-                    // essentially 'undo' the selection
-                    myListView.getSelectionModel().select(this.currentlySelectedPerson);
-                }
-            }
+        // process case notes
+        this.suppressCaseNoteListener = true;
+        List<CaseNote> caseNotes = selectedPerson.getCaseNotes();
+        boolean caseNotesWereAdded = HelperForCaseNotesGUI.populateCaseNotes(caseNotes, choiceBoxForCaseNotes, txtCaseNotes);
+        if (caseNotesWereAdded) {
+            this.changeSelectionToCaseNote(choiceBoxForCaseNotes.getSelectionModel().getSelectedItem());
+        } else {
+            // this person has no case notes, so we need to reset this
+            this.currentlySelectedCaseNote = null;
         }
+        this.suppressCaseNoteListener = false;
+        
+        // reset the change tracker
+        this.changesMadeToPersonRecord = false;
+        
+        // finally, update the selection tracker
+        this.currentlySelectedPerson = selectedPerson;
     }
     
     @FXML
@@ -201,39 +194,9 @@ public class PrimaryController {
         // select the first person by default
         // we can assume there is a first person since we just populated above!
         myListView.getSelectionModel().select(0);
-        this.changeSelectionToPerson(people.get(0));
+        this.userDidSelectListItem(people.get(0));
     }
-    
-    private void changeSelectionToPerson(Person selectedPerson) {
-        // if save button was visible from before, it should be invisible now
-        HelperForJavafx.setNodeHidden(btnSave, true);
-        
-        // set name if available
-        // TIP: always do null != <value to check> rather than the other way around!
-        if (null != selectedPerson.getFullName()) {
-            txtFullName.setText(selectedPerson.getFullName());
-        } else {
-            txtFullName.setText("");
-        }
-        
-        // process case notes
-        this.suppressCaseNoteListener = true;
-        List<CaseNote> caseNotes = selectedPerson.getCaseNotes();
-        boolean caseNotesWereAdded = HelperForCaseNotesGUI.populateCaseNotes(caseNotes, choiceBoxForCaseNotes, txtCaseNotes);
-        if (caseNotesWereAdded) {
-            this.changeSelectionToCaseNote(choiceBoxForCaseNotes.getSelectionModel().getSelectedItem());
-        } else {
-            // this person has no case notes, so we need to reset this
-            this.currentlySelectedCaseNote = null;
-        }
-        this.suppressCaseNoteListener = false;
-        
-        // reset the change tracker
-        this.changesMadeToPersonRecord = false;
-        
-        // finally, update the selection tracker
-        this.currentlySelectedPerson = selectedPerson;
-    }
+   
     
     private void changeSelectionToCaseNote(CaseNote selectedCaseNote) {
         // if save button was visible from before, it should be invisible now
