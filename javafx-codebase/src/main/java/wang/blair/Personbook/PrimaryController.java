@@ -40,7 +40,7 @@ public class PrimaryController {
     public boolean changesMadeToPersonRecord;
     
     // prevent userDidSelectCaseNote() from executing when switching between person records.
-    public boolean suppressCaseNoteListner = false;
+    public boolean suppressCaseNoteListener = false;
 
     public void initialize() {
         this.setupButtonIcons();
@@ -107,7 +107,7 @@ public class PrimaryController {
     
     @FXML
     private void userDidSelectCaseNote(CaseNote selectedCaseNote) {
-        if (!suppressCaseNoteListner) {
+        if (!suppressCaseNoteListener) {
             this.changeSelectionToCaseNote(selectedCaseNote);
         }
     }
@@ -124,7 +124,7 @@ public class PrimaryController {
     @FXML
     private void userDidAddNewCaseNote() {
         HelperForJavafx.setNodesHidden(new Node[]{choiceBoxForCaseNotes, btnNewCaseNote}, true);
-        HelperForJavafx.setNodeHidden(btnCancelNewCaseNote, false);
+        HelperForJavafx.setNodesHidden(new Node[]{btnCancelNewCaseNote, btnSaveCaseNote}, false);
         
         txtCaseNotes.setText("");
         txtCaseNotes.setDisable(false);
@@ -135,7 +135,7 @@ public class PrimaryController {
     @FXML
     private void userDidCancelNewCaseNote() {
         HelperForJavafx.setNodesHidden(new Node[]{choiceBoxForCaseNotes, btnNewCaseNote}, false);
-        HelperForJavafx.setNodeHidden(btnCancelNewCaseNote, true);
+        HelperForJavafx.setNodesHidden(new Node[]{btnCancelNewCaseNote, btnSaveCaseNote}, true);
         
         if (null != currentlySelectedCaseNote) {
             this.changeSelectionToCaseNote(currentlySelectedCaseNote);
@@ -161,31 +161,13 @@ public class PrimaryController {
     
     @FXML
     private void userDidUpdateFullName() {
-        String enteredValue = txtFullName.getText();
-        
-        // TIP: avoid using == for string comparisons
-        this.changesMadeToPersonRecord = !enteredValue.equals(this.currentlySelectedPerson.getFullName());
-        
-        // TIP: do not allow empty full name!
-        // fancy blankness checker from https://stackoverflow.com/questions/3247067/how-do-i-check-that-a-java-string-is-not-all-whitespaces
-        if (this.changesMadeToPersonRecord && !enteredValue.trim().isEmpty()) {
-            HelperForJavafx.setNodeHidden(btnSave, false);
-        } else {
-            HelperForJavafx.setNodeHidden(btnSave, true);
-        }
+        HelperForJavafx.disableButtonIfTextIsBlank(btnSave, txtFullName.getText());
     }
     
     
     @FXML
     private void userDidUpdateActiveCaseNote() {
-        String enteredValue = txtCaseNotes.getText();
-        
-        // same check as per userDidUpdateFullName().
-        if (!enteredValue.trim().isEmpty()) {
-            HelperForJavafx.setNodeHidden(btnSaveCaseNote, false);
-        } else {
-            HelperForJavafx.setNodeHidden(btnSaveCaseNote, true);
-        }
+        HelperForJavafx.disableButtonIfTextIsBlank(btnSaveCaseNote, txtCaseNotes.getText());
     }
     
     
@@ -221,10 +203,6 @@ public class PrimaryController {
     }
     
     private void changeSelectionToPerson(Person selectedPerson) {
-        System.out.println("changeSelectionToPerson selectedPerson = " + selectedPerson);
-        System.out.println("selectedPerson.getCaseNotes().size() = " + selectedPerson.getCaseNotes().size());
-        this.updateStatusBarWithText("Selected record for " + selectedPerson + ".");
-        
         // if save button was visible from before, it should be invisible now
         HelperForJavafx.setNodeHidden(btnSave, true);
         
@@ -237,16 +215,16 @@ public class PrimaryController {
         }
         
         // process case notes
-        this.suppressCaseNoteListner = true;
+        this.suppressCaseNoteListener = true;
         List<CaseNote> caseNotes = selectedPerson.getCaseNotes();
-        boolean caseNotesWereAdded = HelperForJavafx.populateCaseNotes(caseNotes, choiceBoxForCaseNotes, txtCaseNotes);
+        boolean caseNotesWereAdded = HelperForCaseNotesGUI.populateCaseNotes(caseNotes, choiceBoxForCaseNotes, txtCaseNotes);
         if (caseNotesWereAdded) {
             this.changeSelectionToCaseNote(choiceBoxForCaseNotes.getSelectionModel().getSelectedItem());
         } else {
             // this person has no case notes, so we need to reset this
             this.currentlySelectedCaseNote = null;
         }
-        this.suppressCaseNoteListner = false;
+        this.suppressCaseNoteListener = false;
         
         // reset the change tracker
         this.changesMadeToPersonRecord = false;

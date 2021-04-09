@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
@@ -62,32 +63,6 @@ public class HelperForJavafx {
         return preparedReturn;
     }
     
-    public static boolean populateCaseNotes(List<CaseNote> caseNotes, ChoiceBox choiceBoxForCaseNotes, TextArea txtCaseNotes) {
-        boolean caseNotesWereAdded = false;
-
-        // TIP: to clear previous case notes, use clear(), not removeAll().
-        choiceBoxForCaseNotes.getItems().clear();
-        txtCaseNotes.setText("");
-        
-        if (caseNotes.size() > 0) {
-            choiceBoxForCaseNotes.setDisable(false);
-            txtCaseNotes.setDisable(false);
-            for (CaseNote cn : caseNotes) {
-                choiceBoxForCaseNotes.getItems().add(cn);
-                
-                caseNotesWereAdded = true;
-            }
-            
-            // select the first available item
-            choiceBoxForCaseNotes.getSelectionModel().select(0);
-        } else {
-            choiceBoxForCaseNotes.setDisable(true);
-            txtCaseNotes.setDisable(true);
-        }
-        
-        return caseNotesWereAdded;
-    }
-    
     // TIP: This is needed to both set the item visible and reorganise layouts.
     // https://stackoverflow.com/questions/28558165/javafx-setvisible-hides-the-element-but-doesnt-rearrange-adjacent-nodes
     public static void setNodeHidden(Node node, boolean isHidden) {
@@ -98,5 +73,16 @@ public class HelperForJavafx {
         for (Node node : nodes) {
             setNodeHidden(node, isHidden);
         }
+    }
+    
+    // TIP: do not allow empty full name!
+    // fancy blankness checker from https://stackoverflow.com/questions/3247067/how-do-i-check-that-a-java-string-is-not-all-whitespaces
+    public static void disableButtonIfTextIsBlank(Button button, String text) {
+        if (!text.trim().isEmpty()) {
+            button.setDisable(false);
+        } else {
+            button.setDisable(true);
+        }
+        
     }
 }
