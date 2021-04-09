@@ -8,7 +8,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionModel;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -17,7 +16,6 @@ import javafx.scene.control.ToggleGroup;
 public class PrimaryController {
     
     @FXML public ListView<Person> myListView;
-    @FXML public Label lblStatusBar;
     @FXML public Label lblCaseNotes;
     @FXML public Button btnNew;
     @FXML public Button btnCancel;
@@ -50,8 +48,6 @@ public class PrimaryController {
         ToggleGroup tgp = new ToggleGroup();
         tgp.getToggles().add(btnView);
         tgp.getToggles().add(btnEdit);
-        
-        this.updateStatusBarWithText("Ready.");
         
         // some buttons only visibile under very specific conditions
         HelperForJavafx.setNodesHidden(new Node[]{btnSave, btnCancelNewCaseNote, btnSaveCaseNote}, true);
@@ -159,15 +155,11 @@ public class PrimaryController {
     
     @FXML
     private void userDidClickEdit() {
-        this.updateStatusBarWithText("Entered Edit mode.");
         this.setPersonDetailsEditMode(true);
     }
     
-    
-    
     @FXML
     private void userDidClickView() {
-        this.updateStatusBarWithText("Entered View mode.");
         this.setPersonDetailsEditMode(false);
     }
     
@@ -186,10 +178,6 @@ public class PrimaryController {
     //
     // FUNCTIONALITIES
     //
-    
-    private void updateStatusBarWithText(String newStatusBarText) {
-        lblStatusBar.setText(newStatusBarText);
-    }
     
     private void setupButtonIcons() {
         HelperForJavafx.setupIconForButton(btnNew, "Farm-Fresh_add.png");

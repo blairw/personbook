@@ -32,13 +32,6 @@
          </top>
       </BorderPane>
    </left>
-   <bottom>
-      <ToolBar BorderPane.alignment="CENTER_LEFT">
-         <items>
-            <Label fx:id="lblStatusBar" text="STATUSBAR" />
-         </items>
-      </ToolBar>
-   </bottom>
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
@@ -99,7 +92,7 @@
                               <Button fx:id="btnSaveCaseNote" disable="true" mnemonicParsing="false" text="Save" />
                            </children>
                         </HBox>
-                        <TextArea fx:id="txtCaseNotes" onKeyTyped="#userDidUpdateActiveCaseNote" prefWidth="200.0" promptText="Please enter case notes here." />
+                        <TextArea fx:id="txtCaseNotes" onKeyTyped="#userDidUpdateActiveCaseNote" promptText="Please enter case notes here." />
                      </children>
                   </VBox>
                </children>
