@@ -20,6 +20,7 @@ public class PrimaryController {
     @FXML public Label lblStatusBar;
     @FXML public Label lblCaseNotes;
     @FXML public Button btnNew;
+    @FXML public Button btnCancel;
     @FXML public Button btnSave;
     @FXML public Button btnNewCaseNote;
     @FXML public Button btnCancelNewCaseNote;
@@ -136,6 +137,9 @@ public class PrimaryController {
     private void userDidCancelNewCaseNote() {
         this.setCaseNoteEditMode(false);
         
+        // disable save button for next case note
+        btnSaveCaseNote.setDisable(true);
+        
         if (null != currentlySelectedCaseNote) {
             this.changeSelectionToCaseNote(currentlySelectedCaseNote);
         } else {
@@ -143,21 +147,14 @@ public class PrimaryController {
         }
     }
     
-    private void setCaseNoteEditMode(boolean isEditMode) {
-        // change which buttons are visible
-        HelperForJavafx.setNodesHidden(new Node[]{choiceBoxForCaseNotes, btnNewCaseNote}, isEditMode);
-        HelperForJavafx.setNodesHidden(new Node[]{btnCancelNewCaseNote, btnSaveCaseNote}, !isEditMode);
+    @FXML
+    private void userDidClickCancel() {
+        this.setPersonDetailsEditMode(false);
         
-        // user should not be allowed to move between persons when in case note edit mode
-        myListView.setDisable(isEditMode);
-        
-        
-        txtCaseNotes.setDisable(!isEditMode);
-        
-        HelperForJavafx.setTextboxEditable(txtCaseNotes, true);
+        // disable save button for next edit mode
+        btnSave.setDisable(true);
+        btnView.setSelected(true);
     }
-    
-    
     
     
     @FXML
@@ -166,13 +163,12 @@ public class PrimaryController {
         this.setPersonDetailsEditMode(true);
     }
     
+    
+    
     @FXML
     private void userDidClickView() {
         this.updateStatusBarWithText("Entered View mode.");
         this.setPersonDetailsEditMode(false);
-        
-        // in view mode, save button definitely should not be visible!
-        HelperForJavafx.setNodeHidden(btnSave, true);
     }
     
     @FXML
@@ -202,6 +198,8 @@ public class PrimaryController {
         HelperForJavafx.setupIconForButton(btnView, "Farm-Fresh_vcard.png");
         HelperForJavafx.setupIconForButton(btnSave, "Farm-Fresh_diskette.png");
         HelperForJavafx.setupIconForButton(btnSaveCaseNote, "Farm-Fresh_diskette.png");
+        HelperForJavafx.setupIconForButton(btnCancel, "Farm-Fresh_delete.png");
+        HelperForJavafx.setupIconForButton(btnCancelNewCaseNote, "Farm-Fresh_delete.png");
     }
     
     private void setupSampleData() {
@@ -260,12 +258,27 @@ public class PrimaryController {
         this.currentlySelectedCaseNote = selectedCaseNote;
     }
     
-    private void setPersonDetailsEditMode(boolean isEditable) {
-        TextField[] textFields = {txtFullName, txtBdayDay, txtBdayMonth, txtBdayYear};
-        HelperForJavafx.setTextboxesEditable(textFields, isEditable);
+    private void setPersonDetailsEditMode(boolean isEditMode) {
+        HelperForJavafx.setTextboxesEditable(new TextField[]{txtFullName, txtBdayDay, txtBdayMonth, txtBdayYear}, isEditMode);
+        HelperForJavafx.setNodesHidden(new Node[]{btnCancel, btnSave}, !isEditMode);
         
-        myListView.setDisable(isEditable);
-        chkPersonal.setDisable(!isEditable);
-        chkBusiness.setDisable(!isEditable);
+        btnNewCaseNote.setDisable(isEditMode);
+        btnView.setDisable(isEditMode);
+        btnEdit.setDisable(isEditMode);
+        myListView.setDisable(isEditMode);
+        chkPersonal.setDisable(!isEditMode);
+        chkBusiness.setDisable(!isEditMode);
+    }
+    
+    private void setCaseNoteEditMode(boolean isEditMode) {
+        // change which buttons are visible
+        HelperForJavafx.setNodesHidden(new Node[]{choiceBoxForCaseNotes, btnNewCaseNote}, isEditMode);
+        HelperForJavafx.setNodesHidden(new Node[]{btnCancelNewCaseNote, btnSaveCaseNote}, !isEditMode);
+        
+        // user should not be allowed to move between persons when in case note edit mode
+        myListView.setDisable(isEditMode);
+        txtCaseNotes.setDisable(!isEditMode);
+        
+        HelperForJavafx.setTextboxEditable(txtCaseNotes, true);
     }
 }
