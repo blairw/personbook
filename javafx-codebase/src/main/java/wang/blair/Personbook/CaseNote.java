@@ -5,14 +5,14 @@
  */
 package wang.blair.Personbook;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  *
  * @author blair
  */
 public class CaseNote {
-    private LocalDate createTime;
+    private LocalDateTime createTime;
     private String caseNoteText;
     private boolean newCaseNoteNotYetSaved = false;
 
@@ -21,25 +21,25 @@ public class CaseNote {
         if (this.newCaseNoteNotYetSaved) {
             return "(new case note)";
         } else {
-            return "Case Note " + createTime;
+            return "Case Note " + HelperForData.formatLocalDateTime(createTime);
         }
     }
 
     public CaseNote() {
         this.newCaseNoteNotYetSaved = true;
-        this.createTime = LocalDate.now();
+        this.createTime = LocalDateTime.now();
     }
     
     public CaseNote(String caseNoteText) {
-        this.createTime = LocalDate.now();
+        this.createTime = LocalDateTime.now();
         this.caseNoteText = caseNoteText;
     }
 
-    public LocalDate getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(LocalDate createTime) {
+    public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
     }
 

@@ -5,16 +5,14 @@
  */
 package wang.blair.Personbook;
 
-import java.util.List;
 import java.util.Optional;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -32,18 +30,18 @@ public class HelperForJavafx {
         btn.setGraphic(imgView);
     }
     
-    public static void setTextFieldEditable(TextField textfield, boolean isEditable) {
-        textfield.setEditable(isEditable);
+    public static void setTextboxEditable(TextInputControl textInputControl, boolean isEditable) {
+        textInputControl.setEditable(isEditable);
         
         if (isEditable) {
-            textfield.setStyle("-fx-control-inner-background: white;");
+            textInputControl.setStyle("-fx-control-inner-background: white;");
         } else {
-            textfield.setStyle("-fx-control-inner-background: #f3f3f3;");
+            textInputControl.setStyle("-fx-control-inner-background: #f3f3f3;");
         }
     }
-    public static void setTextFieldsEditable(TextField[] textFields, boolean isEditable) {
+    public static void setTextboxesEditable(TextField[] textFields, boolean isEditable) {
         for (TextField textField : textFields) {
-            setTextFieldEditable(textField, isEditable);
+            setTextboxEditable(textField, isEditable);
         }
     }
     

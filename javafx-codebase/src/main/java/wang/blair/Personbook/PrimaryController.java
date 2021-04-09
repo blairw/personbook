@@ -56,7 +56,10 @@ public class PrimaryController {
         HelperForJavafx.setNodesHidden(new Node[]{btnSave, btnCancelNewCaseNote, btnSaveCaseNote}, true);
         
         // since View is selected by default
-        this.setEverythingEditable(false);
+        this.setPersonDetailsEditable(false);
+        
+        // managed separately to Person details
+        HelperForJavafx.setTextboxEditable(txtCaseNotes, false);
         
         myListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> userDidSelectListItem(newValue));
         choiceBoxForCaseNotes.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> userDidSelectCaseNote(newValue));
@@ -129,6 +132,8 @@ public class PrimaryController {
         txtCaseNotes.setText("");
         txtCaseNotes.setDisable(false);
         txtCaseNotes.requestFocus();
+        
+        HelperForJavafx.setTextboxEditable(txtCaseNotes, true);
     }
     
     
@@ -139,7 +144,12 @@ public class PrimaryController {
         
         if (null != currentlySelectedCaseNote) {
             this.changeSelectionToCaseNote(currentlySelectedCaseNote);
+        } else {
+            txtCaseNotes.setText("");
+            txtCaseNotes.setDisable(true);
         }
+        
+        HelperForJavafx.setTextboxEditable(txtCaseNotes, false);
     }
     
     
@@ -147,13 +157,13 @@ public class PrimaryController {
     @FXML
     private void userDidClickEdit() {
         this.updateStatusBarWithText("Entered Edit mode.");
-        this.setEverythingEditable(true);
+        this.setPersonDetailsEditable(true);
     }
     
     @FXML
     private void userDidClickView() {
         this.updateStatusBarWithText("Entered View mode.");
-        this.setEverythingEditable(false);
+        this.setPersonDetailsEditable(false);
         
         // in view mode, save button definitely should not be visible!
         HelperForJavafx.setNodeHidden(btnSave, true);
@@ -244,9 +254,9 @@ public class PrimaryController {
         this.currentlySelectedCaseNote = selectedCaseNote;
     }
     
-    private void setEverythingEditable(boolean isEditable) {
+    private void setPersonDetailsEditable(boolean isEditable) {
         TextField[] textFields = {txtFullName, txtBdayDay, txtBdayMonth, txtBdayYear};
-        HelperForJavafx.setTextFieldsEditable(textFields, isEditable);
+        HelperForJavafx.setTextboxesEditable(textFields, isEditable);
         
         chkPersonal.setDisable(!isEditable);
         chkBusiness.setDisable(!isEditable);

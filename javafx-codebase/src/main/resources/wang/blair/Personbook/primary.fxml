@@ -25,7 +25,7 @@
             <Separator orientation="VERTICAL" />
             <ToggleButton fx:id="btnView" mnemonicParsing="false" onAction="#userDidClickView" selected="true" text="View" />
             <ToggleButton fx:id="btnEdit" mnemonicParsing="false" onAction="#userDidClickEdit" text="Edit" />
-            <Button fx:id="btnSave" mnemonicParsing="false" onAction="#userDidClickNew" text="Save" />
+            <Button fx:id="btnSave" disable="true" mnemonicParsing="false" onAction="#userDidClickNew" text="Save" />
          </items>
       </ToolBar>
    </top>
@@ -79,17 +79,17 @@
                   </VBox>
                   <VBox spacing="10.0">
                      <children>
-                        <Label text="Case Notes">
+                        <Label fx:id="lblCaseNotes" text="Case Notes">
                            <font>
                               <Font size="16.0" />
                            </font>
                         </Label>
                         <HBox spacing="10.0">
                            <children>
-                              <ChoiceBox fx:id="choiceBoxForCaseNotes" prefHeight="25.0" prefWidth="185.0" />
+                              <ChoiceBox fx:id="choiceBoxForCaseNotes" prefHeight="25.0" prefWidth="250.0" />
                               <Button fx:id="btnNewCaseNote" mnemonicParsing="false" onAction="#userDidAddNewCaseNote" text="New" />
                               <Button fx:id="btnCancelNewCaseNote" mnemonicParsing="false" onAction="#userDidCancelNewCaseNote" text="Cancel" />
-                              <Button fx:id="btnSaveCaseNote" mnemonicParsing="false" text="Save" />
+                              <Button fx:id="btnSaveCaseNote" disable="true" mnemonicParsing="false" text="Save" />
                            </children>
                         </HBox>
                         <TextArea fx:id="txtCaseNotes" onKeyTyped="#userDidUpdateActiveCaseNote" prefWidth="200.0" promptText="Please enter case notes here." />

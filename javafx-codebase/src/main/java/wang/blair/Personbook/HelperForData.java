@@ -5,6 +5,8 @@
  */
 package wang.blair.Personbook;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,5 +32,10 @@ public class HelperForData {
         people.add(new Person("Michael Noland"));
         
         return people;
+    }
+    
+    public static String formatLocalDateTime(LocalDateTime ldt) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss");
+        return ldt.format(dtf);
     }
 }
