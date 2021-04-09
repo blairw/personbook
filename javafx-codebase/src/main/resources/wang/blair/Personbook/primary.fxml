@@ -1,20 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wang.blair.Personbook.PrimaryController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wang.blair.Personbook.PrimaryController">
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <items>
-          <Button mnemonicParsing="false" text="Button" />
-        </items>
+         <items>
+            <Button fx:id="btnNew" mnemonicParsing="false" onAction="#userDidClickNew" text="New" />
+            <Separator orientation="VERTICAL" />
+            <ToggleButton fx:id="btnView" mnemonicParsing="false" onAction="#userDidClickView" selected="true" text="View" />
+            <ToggleButton fx:id="btnEdit" mnemonicParsing="false" onAction="#userDidClickEdit" text="Edit" />
+            <Button fx:id="btnSave" mnemonicParsing="false" onAction="#userDidClickNew" text="Save" />
+         </items>
       </ToolBar>
    </top>
    <left>
-      <TreeView fx:id="myTreeView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+      <ListView fx:id="myListView" prefHeight="560.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
    </left>
+   <center>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox layoutX="23.0" layoutY="27.0" spacing="20.0">
+               <children>
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label text="Full Name">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txtFullName" editable="false" onKeyTyped="#userDidUpdateFullName" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label text="Birthday">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <FlowPane hgap="10.0">
+                           <children>
+                              <TextField fx:id="txtBdayDay" editable="false" prefHeight="26.0" prefWidth="60.0" />
+                              <Label text="(day)" />
+                              <TextField fx:id="txtBdayMonth" editable="false" prefHeight="26.0" prefWidth="60.0" />
+                              <Label text="(month)" />
+                              <TextField fx:id="txtBdayYear" editable="false" prefHeight="26.0" prefWidth="60.0" />
+                              <Label text="(year)" />
+                           </children>
+                        </FlowPane>
+                     </children>
+                  </VBox>
+                  <VBox spacing="10.0">
+                     <children>
+                        <Label text="Relationship type">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="chkPersonal" disable="true" mnemonicParsing="false" text="Important for personal reasons" />
+                        <CheckBox fx:id="chkBusiness" disable="true" mnemonicParsing="false" text="Important for business reasons" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+   </center>
+   <bottom>
+      <ToolBar BorderPane.alignment="CENTER_LEFT">
+         <items>
+            <Label fx:id="lblStatusBar" text="STATUSBAR" />
+         </items>
+      </ToolBar>
+   </bottom>
 </BorderPane>

@@ -17,12 +17,21 @@ public class Person {
     private String fullName;
     private boolean importantPersonal;
     private boolean importantBusiness;
+    private boolean newContactNotYetSaved = false;
     private MonthDay bdayMonthDay;
     private Year birthdayYear;
 
     @Override
     public String toString() {
-        return fullName;
+        if (newContactNotYetSaved) {
+            return "(new contact)";
+        } else {
+            return fullName;
+        }
+    }
+    
+    public Person() {
+        this.newContactNotYetSaved = true;
     }
     
     public Person(String fullName) {
@@ -75,5 +84,13 @@ public class Person {
 
     public void setBirthdayYear(Year birthdayYear) {
         this.birthdayYear = birthdayYear;
+    }
+
+    public boolean isNewContactNotYetSaved() {
+        return newContactNotYetSaved;
+    }
+
+    public void setNewContactNotYetSaved(boolean newContactNotYetSaved) {
+        this.newContactNotYetSaved = newContactNotYetSaved;
     }
 }

@@ -1,57 +1,166 @@
 package wang.blair.Personbook;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 
 public class PrimaryController {
-
-    @FXML
-    public TreeView<Object> myTreeView;
+    
+    @FXML public ListView<Person> myListView;
+    @FXML public Label lblStatusBar;
+    @FXML public Button btnNew;
+    @FXML public Button btnSave;
+    @FXML public ToggleButton btnView;
+    @FXML public ToggleButton btnEdit;
+    @FXML public TextField txtFullName;
+    @FXML public TextField txtBdayDay;
+    @FXML public TextField txtBdayMonth;
+    @FXML public TextField txtBdayYear;
+    @FXML public CheckBox chkPersonal;
+    @FXML public CheckBox chkBusiness;
+    
+    public Person currentlySelectedPerson;
+    public boolean changesHaveBeenMade;
 
     public void initialize() {
-        TreeItem rootItem = new TreeItem("Items");
-        myTreeView.setRoot(rootItem);
-        myTreeView.setShowRoot(false);
+        this.setupButtonIcons();
+        this.setupSampleData();
         
-        // add 2 groups
-        TreeItem group1 = new TreeItem(new PersonGroup("Group 1"));
-        TreeItem group2 = new TreeItem(new PersonGroup("Group 2"));
-        rootItem.getChildren().add(group1);
-        rootItem.getChildren().add(group2);
+        ToggleGroup tgp = new ToggleGroup();
+        tgp.getToggles().add(btnView);
+        tgp.getToggles().add(btnEdit);
         
-        // add all the things
-        group1.getChildren().add(new TreeItem(new Person("Andrew Bob")));
-        group1.getChildren().add(new TreeItem(new Person("Charlie Dennis")));
-        group1.getChildren().add(new TreeItem(new Person("Evan Foucault")));
-        group2.getChildren().add(new TreeItem(new Person("Gary Habermas")));
-        group2.getChildren().add(new TreeItem(new Person("Ivan Jung")));
-        group2.getChildren().add(new TreeItem(new Person("Kevin Larry")));
-        group2.getChildren().add(new TreeItem(new Person("Michael Noland")));
+        this.updateStatusBarWithText("Ready.");
         
-        myTreeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> userDidSelectTreeItem(newValue));
+        // btnSave only visibile under very specific conditions
+        btnSave.setVisible(false);
+        
+        // since View is selected by default
+        this.setEverythingEditable(false);
+        
+        myListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> userDidSelectListItem(newValue));
     }
-
-    // adapted from https://stackoverflow.com/questions/37531533/javafx-treeview-return-selected-items
-    private void userDidSelectTreeItem(TreeItem<Object> treeItemObject) {
-        Object treeItem = treeItemObject.getValue();
+    
+    private void updateStatusBarWithText(String newStatusBarText) {
+        lblStatusBar.setText(newStatusBarText);
+    }
+    
+    private void setupButtonIcons() {
+        HelperForJavafx.setupIconForButton(btnNew, "Farm-Fresh_add.png");
+        HelperForJavafx.setupIconForButton(btnEdit, "Farm-Fresh_pencil.png");
+        HelperForJavafx.setupIconForButton(btnView, "Farm-Fresh_vcard.png");
+        HelperForJavafx.setupIconForButton(btnSave, "Farm-Fresh_diskette.png");
+    }
+    
+    private void setupSampleData() {
+        // add all the things
+        List<Person> people = HelperForData.generateSamplePersonRecords();
         
-        // Respond differently depending on Object class
-        if (treeItem.getClass().equals(Person.class)) {
-            Person treeItemPerson = (Person) treeItem;
-            System.out.println(treeItemPerson.getFullName());
+        for (Person p : people) {
+            myListView.getItems().add(p);
         }
         
-        if (treeItem.getClass().equals(PersonGroup.class)) {
-            System.out.println("This is a group");
+        // select the first person by default
+        // we can assume there is a first person since we just populated above!
+        myListView.getSelectionModel().select(0);
+        this.changeSelectionToPerson(myListView.getItems().get(0));
+    }
+
+    private void userDidSelectListItem(Person selectedPerson) {
+        if (selectedPerson == this.currentlySelectedPerson) {
+            // no action required - user selected the same person who is already selected!
+        } else {
+            if (this.currentlySelectedPerson.isNewContactNotYetSaved() || this.changesHaveBeenMade) {
+                boolean proceedWithDestructiveChange = HelperForJavafx.confirmDiscardEditChanges();
+                
+                if (proceedWithDestructiveChange){
+                    // remove current item - only for case where we are creating new record
+                    if (this.currentlySelectedPerson.isNewContactNotYetSaved()) {
+                        myListView.getItems().remove(currentlySelectedPerson);
+                    }
+                    
+                    // reset the change tracker
+                    this.changesHaveBeenMade = false;
+                
+                    // complete the selection change
+                    this.changeSelectionToPerson(selectedPerson);
+                } else {
+                    // essentially 'undo' the selection
+                    myListView.getSelectionModel().select(this.currentlySelectedPerson);
+                }
+            } else {
+                this.changeSelectionToPerson(selectedPerson);
+            }
+        }
+    }
+    
+    private void changeSelectionToPerson(Person selectedPerson) {
+        this.updateStatusBarWithText("Selected record for " + selectedPerson + ".");
+        this.currentlySelectedPerson = selectedPerson;
+        
+        // if save button was visible from before, it should be invisible now
+        btnSave.setVisible(false);
+        
+        if (null != selectedPerson.getFullName()) {
+            txtFullName.setText(selectedPerson.getFullName());
+        } else {
+            txtFullName.setText("");
         }
     }
     
     @FXML
-    private void switchToSecondary() throws IOException {
-        App.setRoot("secondary");
+    private void userDidClickNew() {
+        Person person = new Person();
+        myListView.getItems().add(person);
+        myListView.getSelectionModel().select(person);
+        
+        this.currentlySelectedPerson = person;
+    }
+    
+    @FXML
+    private void userDidClickEdit() {
+        this.updateStatusBarWithText("Entered Edit mode.");
+        this.setEverythingEditable(true);
+    }
+    
+    @FXML
+    private void userDidClickView() {
+        this.updateStatusBarWithText("Entered View mode.");
+        this.setEverythingEditable(false);
+        
+        // in view mode, save button definitely should not be visible!
+        btnSave.setVisible(false);
+    }
+    
+    private void setEverythingEditable(boolean isEditable) {
+        HelperForJavafx.setTextFieldEditable(txtFullName, isEditable);
+        HelperForJavafx.setTextFieldEditable(txtBdayDay, isEditable);
+        HelperForJavafx.setTextFieldEditable(txtBdayMonth, isEditable);
+        HelperForJavafx.setTextFieldEditable(txtBdayYear, isEditable);
+        
+        chkPersonal.setDisable(!isEditable);
+        chkBusiness.setDisable(!isEditable);
+    }
+    
+    @FXML
+    private void userDidUpdateFullName() {
+        String enteredValue = txtFullName.getText();
+        
+        // TIP: avoid using == for string comparisons
+        this.changesHaveBeenMade = !enteredValue.equals(this.currentlySelectedPerson.getFullName());
+        
+        // TIP: do not allow empty full name!
+        // fancy blankness checker from https://stackoverflow.com/questions/3247067/how-do-i-check-that-a-java-string-is-not-all-whitespaces
+        if (this.changesHaveBeenMade && !enteredValue.trim().isEmpty()) {
+            btnSave.setVisible(true);
+        } else {
+            btnSave.setVisible(false);
+        }
     }
 }
