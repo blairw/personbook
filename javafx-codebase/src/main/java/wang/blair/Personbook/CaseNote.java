@@ -14,12 +14,22 @@ import java.time.LocalDate;
 public class CaseNote {
     private LocalDate createTime;
     private String caseNoteText;
+    private boolean newCaseNoteNotYetSaved = false;
 
     @Override
     public String toString() {
-        return "Case Note " + createTime;
+        if (this.newCaseNoteNotYetSaved) {
+            return "(new case note)";
+        } else {
+            return "Case Note " + createTime;
+        }
     }
 
+    public CaseNote() {
+        this.newCaseNoteNotYetSaved = true;
+        this.createTime = LocalDate.now();
+    }
+    
     public CaseNote(String caseNoteText) {
         this.createTime = LocalDate.now();
         this.caseNoteText = caseNoteText;
@@ -39,5 +49,13 @@ public class CaseNote {
 
     public void setCaseNoteText(String caseNoteText) {
         this.caseNoteText = caseNoteText;
+    }
+
+    public boolean isNewCaseNoteNotYetSaved() {
+        return newCaseNoteNotYetSaved;
+    }
+
+    public void setNewCaseNoteNotYetSaved(boolean newCaseNoteNotYetSaved) {
+        this.newCaseNoteNotYetSaved = newCaseNoteNotYetSaved;
     }
 }

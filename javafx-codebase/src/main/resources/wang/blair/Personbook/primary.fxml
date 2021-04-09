@@ -87,11 +87,12 @@
                         <HBox spacing="10.0">
                            <children>
                               <ChoiceBox fx:id="choiceBoxForCaseNotes" prefHeight="25.0" prefWidth="185.0" />
-                              <Button fx:id="btnNewCaseNote" mnemonicParsing="false" text="New" />
+                              <Button fx:id="btnNewCaseNote" mnemonicParsing="false" onAction="#userDidAddNewCaseNote" text="New" />
+                              <Button fx:id="btnCancelNewCaseNote" mnemonicParsing="false" onAction="#userDidCancelNewCaseNote" text="Cancel" />
                               <Button fx:id="btnSaveCaseNote" mnemonicParsing="false" text="Save" />
                            </children>
                         </HBox>
-                        <TextArea fx:id="txtCaseNotes" prefWidth="200.0" />
+                        <TextArea fx:id="txtCaseNotes" onKeyTyped="#userDidUpdateActiveCaseNote" prefWidth="200.0" promptText="Please enter case notes here." />
                      </children>
                   </VBox>
                </children>

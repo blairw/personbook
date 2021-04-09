@@ -2,11 +2,13 @@ package wang.blair.Personbook;
 
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -16,9 +18,11 @@ public class PrimaryController {
     
     @FXML public ListView<Person> myListView;
     @FXML public Label lblStatusBar;
+    @FXML public Label lblCaseNotes;
     @FXML public Button btnNew;
     @FXML public Button btnSave;
     @FXML public Button btnNewCaseNote;
+    @FXML public Button btnCancelNewCaseNote;
     @FXML public Button btnSaveCaseNote;
     @FXML public ToggleButton btnView;
     @FXML public ToggleButton btnEdit;
@@ -29,10 +33,14 @@ public class PrimaryController {
     @FXML public TextArea txtCaseNotes;
     @FXML public CheckBox chkPersonal;
     @FXML public CheckBox chkBusiness;
-    @FXML public ChoiceBox choiceBoxForCaseNotes;
+    @FXML public ChoiceBox<CaseNote> choiceBoxForCaseNotes;
     
     public Person currentlySelectedPerson;
-    public boolean changesHaveBeenMade;
+    public CaseNote currentlySelectedCaseNote;
+    public boolean changesMadeToPersonRecord;
+    
+    // prevent userDidSelectCaseNote() from executing when switching between person records.
+    public boolean suppressCaseNoteListner = false;
 
     public void initialize() {
         this.setupButtonIcons();
@@ -44,26 +52,41 @@ public class PrimaryController {
         
         this.updateStatusBarWithText("Ready.");
         
-        // btnSave only visibile under very specific conditions
-        btnSave.setVisible(false);
+        // some buttons only visibile under very specific conditions
+        HelperForJavafx.setNodesHidden(new Node[]{btnSave, btnCancelNewCaseNote, btnSaveCaseNote}, true);
         
         // since View is selected by default
         this.setEverythingEditable(false);
         
         myListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> userDidSelectListItem(newValue));
+        choiceBoxForCaseNotes.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> userDidSelectCaseNote(newValue));
     }
-    
-    
     //
     // HANDLE USER ACTIONS
     //
 
     @FXML
     private void userDidSelectListItem(Person selectedPerson) {
+        boolean weShouldContinue = true;
         if (selectedPerson == this.currentlySelectedPerson) {
-            // no action required - user selected the same person who is already selected!
-        } else {
-            if (this.currentlySelectedPerson.isNewContactNotYetSaved() || this.changesHaveBeenMade) {
+            // no action required because
+            // user selected the same person who is already selected!
+            weShouldContinue = false;
+        }
+        
+        if (weShouldContinue) {
+            boolean continuingWouldCauseDataLoss = false;
+            if (this.currentlySelectedPerson.isNewContactNotYetSaved()) {
+                continuingWouldCauseDataLoss = true;
+            }
+            if (this.changesMadeToPersonRecord) {
+                continuingWouldCauseDataLoss = true;
+            }
+            
+            if (!continuingWouldCauseDataLoss) {
+                // go ahead and change it, there is no data loss
+                this.changeSelectionToPerson(selectedPerson);
+            } else {
                 boolean proceedWithDestructiveChange = HelperForJavafx.confirmDiscardEditChanges();
                 
                 if (proceedWithDestructiveChange){
@@ -71,9 +94,6 @@ public class PrimaryController {
                     if (this.currentlySelectedPerson.isNewContactNotYetSaved()) {
                         myListView.getItems().remove(currentlySelectedPerson);
                     }
-                    
-                    // reset the change tracker
-                    this.changesHaveBeenMade = false;
                 
                     // complete the selection change
                     this.changeSelectionToPerson(selectedPerson);
@@ -81,20 +101,48 @@ public class PrimaryController {
                     // essentially 'undo' the selection
                     myListView.getSelectionModel().select(this.currentlySelectedPerson);
                 }
-            } else {
-                this.changeSelectionToPerson(selectedPerson);
             }
         }
     }
+    
+    @FXML
+    private void userDidSelectCaseNote(CaseNote selectedCaseNote) {
+        if (!suppressCaseNoteListner) {
+            this.changeSelectionToCaseNote(selectedCaseNote);
+        }
+    }
+    
     
     @FXML
     private void userDidClickNew() {
         Person person = new Person();
         myListView.getItems().add(person);
         myListView.getSelectionModel().select(person);
-        
-        this.currentlySelectedPerson = person;
     }
+    
+    
+    @FXML
+    private void userDidAddNewCaseNote() {
+        HelperForJavafx.setNodesHidden(new Node[]{choiceBoxForCaseNotes, btnNewCaseNote}, true);
+        HelperForJavafx.setNodeHidden(btnCancelNewCaseNote, false);
+        
+        txtCaseNotes.setText("");
+        txtCaseNotes.setDisable(false);
+        txtCaseNotes.requestFocus();
+    }
+    
+    
+    @FXML
+    private void userDidCancelNewCaseNote() {
+        HelperForJavafx.setNodesHidden(new Node[]{choiceBoxForCaseNotes, btnNewCaseNote}, false);
+        HelperForJavafx.setNodeHidden(btnCancelNewCaseNote, true);
+        
+        if (null != currentlySelectedCaseNote) {
+            this.changeSelectionToCaseNote(currentlySelectedCaseNote);
+        }
+    }
+    
+    
     
     @FXML
     private void userDidClickEdit() {
@@ -108,7 +156,7 @@ public class PrimaryController {
         this.setEverythingEditable(false);
         
         // in view mode, save button definitely should not be visible!
-        btnSave.setVisible(false);
+        HelperForJavafx.setNodeHidden(btnSave, true);
     }
     
     @FXML
@@ -116,14 +164,27 @@ public class PrimaryController {
         String enteredValue = txtFullName.getText();
         
         // TIP: avoid using == for string comparisons
-        this.changesHaveBeenMade = !enteredValue.equals(this.currentlySelectedPerson.getFullName());
+        this.changesMadeToPersonRecord = !enteredValue.equals(this.currentlySelectedPerson.getFullName());
         
         // TIP: do not allow empty full name!
         // fancy blankness checker from https://stackoverflow.com/questions/3247067/how-do-i-check-that-a-java-string-is-not-all-whitespaces
-        if (this.changesHaveBeenMade && !enteredValue.trim().isEmpty()) {
-            btnSave.setVisible(true);
+        if (this.changesMadeToPersonRecord && !enteredValue.trim().isEmpty()) {
+            HelperForJavafx.setNodeHidden(btnSave, false);
         } else {
-            btnSave.setVisible(false);
+            HelperForJavafx.setNodeHidden(btnSave, true);
+        }
+    }
+    
+    
+    @FXML
+    private void userDidUpdateActiveCaseNote() {
+        String enteredValue = txtCaseNotes.getText();
+        
+        // same check as per userDidUpdateFullName().
+        if (!enteredValue.trim().isEmpty()) {
+            HelperForJavafx.setNodeHidden(btnSaveCaseNote, false);
+        } else {
+            HelperForJavafx.setNodeHidden(btnSaveCaseNote, true);
         }
     }
     
@@ -156,15 +217,16 @@ public class PrimaryController {
         // select the first person by default
         // we can assume there is a first person since we just populated above!
         myListView.getSelectionModel().select(0);
-        this.changeSelectionToPerson(myListView.getItems().get(0));
+        this.changeSelectionToPerson(people.get(0));
     }
     
     private void changeSelectionToPerson(Person selectedPerson) {
+        System.out.println("changeSelectionToPerson selectedPerson = " + selectedPerson);
+        System.out.println("selectedPerson.getCaseNotes().size() = " + selectedPerson.getCaseNotes().size());
         this.updateStatusBarWithText("Selected record for " + selectedPerson + ".");
-        this.currentlySelectedPerson = selectedPerson;
         
         // if save button was visible from before, it should be invisible now
-        btnSave.setVisible(false);
+        HelperForJavafx.setNodeHidden(btnSave, true);
         
         // set name if available
         // TIP: always do null != <value to check> rather than the other way around!
@@ -174,26 +236,39 @@ public class PrimaryController {
             txtFullName.setText("");
         }
         
-        // TIP: to clear previous case notes, use clear(), not removeAll().
-        choiceBoxForCaseNotes.getItems().clear();
-        if (selectedPerson.getCaseNotes().size() > 0) {
-            choiceBoxForCaseNotes.setDisable(false);
-            txtCaseNotes.setDisable(false);
-            
-            for (CaseNote cn : selectedPerson.getCaseNotes()) {
-                choiceBoxForCaseNotes.getItems().add(cn);
-            }
+        // process case notes
+        this.suppressCaseNoteListner = true;
+        List<CaseNote> caseNotes = selectedPerson.getCaseNotes();
+        boolean caseNotesWereAdded = HelperForJavafx.populateCaseNotes(caseNotes, choiceBoxForCaseNotes, txtCaseNotes);
+        if (caseNotesWereAdded) {
+            this.changeSelectionToCaseNote(choiceBoxForCaseNotes.getSelectionModel().getSelectedItem());
         } else {
-            choiceBoxForCaseNotes.setDisable(true);
-            txtCaseNotes.setDisable(true);
+            // this person has no case notes, so we need to reset this
+            this.currentlySelectedCaseNote = null;
         }
+        this.suppressCaseNoteListner = false;
+        
+        // reset the change tracker
+        this.changesMadeToPersonRecord = false;
+        
+        // finally, update the selection tracker
+        this.currentlySelectedPerson = selectedPerson;
+    }
+    
+    private void changeSelectionToCaseNote(CaseNote selectedCaseNote) {
+        // if save button was visible from before, it should be invisible now
+        HelperForJavafx.setNodeHidden(btnSaveCaseNote, true);
+
+        // populate case note text
+        txtCaseNotes.setText(selectedCaseNote.getCaseNoteText());
+        
+        // finally, update the selection tracker
+        this.currentlySelectedCaseNote = selectedCaseNote;
     }
     
     private void setEverythingEditable(boolean isEditable) {
-        HelperForJavafx.setTextFieldEditable(txtFullName, isEditable);
-        HelperForJavafx.setTextFieldEditable(txtBdayDay, isEditable);
-        HelperForJavafx.setTextFieldEditable(txtBdayMonth, isEditable);
-        HelperForJavafx.setTextFieldEditable(txtBdayYear, isEditable);
+        TextField[] textFields = {txtFullName, txtBdayDay, txtBdayMonth, txtBdayYear};
+        HelperForJavafx.setTextFieldsEditable(textFields, isEditable);
         
         chkPersonal.setDisable(!isEditable);
         chkBusiness.setDisable(!isEditable);

@@ -5,10 +5,14 @@
  */
 package wang.blair.Personbook;
 
+import java.util.List;
 import java.util.Optional;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -36,6 +40,11 @@ public class HelperForJavafx {
             textfield.setStyle("-fx-control-inner-background: #f3f3f3;");
         }
     }
+    public static void setTextFieldsEditable(TextField[] textFields, boolean isEditable) {
+        for (TextField textField : textFields) {
+            setTextFieldEditable(textField, isEditable);
+        }
+    }
     
     public static boolean confirmDiscardEditChanges() {
         boolean preparedReturn = false;
@@ -51,5 +60,43 @@ public class HelperForJavafx {
         }
         
         return preparedReturn;
+    }
+    
+    public static boolean populateCaseNotes(List<CaseNote> caseNotes, ChoiceBox choiceBoxForCaseNotes, TextArea txtCaseNotes) {
+        boolean caseNotesWereAdded = false;
+
+        // TIP: to clear previous case notes, use clear(), not removeAll().
+        choiceBoxForCaseNotes.getItems().clear();
+        txtCaseNotes.setText("");
+        
+        if (caseNotes.size() > 0) {
+            choiceBoxForCaseNotes.setDisable(false);
+            txtCaseNotes.setDisable(false);
+            for (CaseNote cn : caseNotes) {
+                choiceBoxForCaseNotes.getItems().add(cn);
+                
+                caseNotesWereAdded = true;
+            }
+            
+            // select the first available item
+            choiceBoxForCaseNotes.getSelectionModel().select(0);
+        } else {
+            choiceBoxForCaseNotes.setDisable(true);
+            txtCaseNotes.setDisable(true);
+        }
+        
+        return caseNotesWereAdded;
+    }
+    
+    // TIP: This is needed to both set the item visible and reorganise layouts.
+    // https://stackoverflow.com/questions/28558165/javafx-setvisible-hides-the-element-but-doesnt-rearrange-adjacent-nodes
+    public static void setNodeHidden(Node node, boolean isHidden) {
+        node.setVisible(!isHidden);
+        node.setManaged(!isHidden);
+    }
+    public static void setNodesHidden(Node[] nodes, boolean isHidden) {
+        for (Node node : nodes) {
+            setNodeHidden(node, isHidden);
+        }
     }
 }

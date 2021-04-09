@@ -29,7 +29,7 @@ public class Person {
 
     @Override
     public String toString() {
-        if (newContactNotYetSaved) {
+        if (this.newContactNotYetSaved) {
             return "(new contact)";
         } else {
             return fullName;
