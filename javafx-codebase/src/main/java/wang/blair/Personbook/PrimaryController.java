@@ -56,7 +56,7 @@ public class PrimaryController {
         HelperForJavafx.setNodesHidden(new Node[]{btnSave, btnCancelNewCaseNote, btnSaveCaseNote}, true);
         
         // since View is selected by default
-        this.setPersonDetailsEditable(false);
+        this.setPersonDetailsEditMode(false);
         
         // managed separately to Person details
         HelperForJavafx.setTextboxEditable(txtCaseNotes, false);
@@ -126,44 +126,50 @@ public class PrimaryController {
     
     @FXML
     private void userDidAddNewCaseNote() {
-        HelperForJavafx.setNodesHidden(new Node[]{choiceBoxForCaseNotes, btnNewCaseNote}, true);
-        HelperForJavafx.setNodesHidden(new Node[]{btnCancelNewCaseNote, btnSaveCaseNote}, false);
-        
         txtCaseNotes.setText("");
-        txtCaseNotes.setDisable(false);
         txtCaseNotes.requestFocus();
         
-        HelperForJavafx.setTextboxEditable(txtCaseNotes, true);
+        this.setCaseNoteEditMode(true);
     }
-    
     
     @FXML
     private void userDidCancelNewCaseNote() {
-        HelperForJavafx.setNodesHidden(new Node[]{choiceBoxForCaseNotes, btnNewCaseNote}, false);
-        HelperForJavafx.setNodesHidden(new Node[]{btnCancelNewCaseNote, btnSaveCaseNote}, true);
+        this.setCaseNoteEditMode(false);
         
         if (null != currentlySelectedCaseNote) {
             this.changeSelectionToCaseNote(currentlySelectedCaseNote);
         } else {
             txtCaseNotes.setText("");
-            txtCaseNotes.setDisable(true);
         }
-        
-        HelperForJavafx.setTextboxEditable(txtCaseNotes, false);
     }
+    
+    private void setCaseNoteEditMode(boolean isEditMode) {
+        // change which buttons are visible
+        HelperForJavafx.setNodesHidden(new Node[]{choiceBoxForCaseNotes, btnNewCaseNote}, isEditMode);
+        HelperForJavafx.setNodesHidden(new Node[]{btnCancelNewCaseNote, btnSaveCaseNote}, !isEditMode);
+        
+        // user should not be allowed to move between persons when in case note edit mode
+        myListView.setDisable(isEditMode);
+        
+        
+        txtCaseNotes.setDisable(!isEditMode);
+        
+        HelperForJavafx.setTextboxEditable(txtCaseNotes, true);
+    }
+    
     
     
     
     @FXML
     private void userDidClickEdit() {
         this.updateStatusBarWithText("Entered Edit mode.");
-        this.setPersonDetailsEditable(true);
+        this.setPersonDetailsEditMode(true);
     }
     
     @FXML
     private void userDidClickView() {
         this.updateStatusBarWithText("Entered View mode.");
-        this.setPersonDetailsEditable(false);
+        this.setPersonDetailsEditMode(false);
         
         // in view mode, save button definitely should not be visible!
         HelperForJavafx.setNodeHidden(btnSave, true);
@@ -254,10 +260,11 @@ public class PrimaryController {
         this.currentlySelectedCaseNote = selectedCaseNote;
     }
     
-    private void setPersonDetailsEditable(boolean isEditable) {
+    private void setPersonDetailsEditMode(boolean isEditable) {
         TextField[] textFields = {txtFullName, txtBdayDay, txtBdayMonth, txtBdayYear};
         HelperForJavafx.setTextboxesEditable(textFields, isEditable);
         
+        myListView.setDisable(isEditable);
         chkPersonal.setDisable(!isEditable);
         chkBusiness.setDisable(!isEditable);
     }
