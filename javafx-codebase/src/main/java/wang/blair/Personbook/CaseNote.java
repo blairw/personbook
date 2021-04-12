@@ -14,25 +14,14 @@ import java.time.LocalDateTime;
 public class CaseNote {
     private LocalDateTime createTime;
     private String caseNoteText;
-    private boolean newCaseNoteNotYetSaved = false;
 
     @Override
     public String toString() {
-        if (this.newCaseNoteNotYetSaved) {
-            return "(new case note)";
-        } else {
-            return "Case Note " + HelperForData.formatLocalDateTime(createTime);
-        }
+        return "Case Note " + HelperForData.formatLocalDateTime(createTime);
     }
 
     public CaseNote() {
-        this.newCaseNoteNotYetSaved = true;
         this.createTime = LocalDateTime.now();
-    }
-    
-    public CaseNote(String caseNoteText) {
-        this.createTime = LocalDateTime.now();
-        this.caseNoteText = caseNoteText;
     }
 
     public LocalDateTime getCreateTime() {
@@ -49,13 +38,5 @@ public class CaseNote {
 
     public void setCaseNoteText(String caseNoteText) {
         this.caseNoteText = caseNoteText;
-    }
-
-    public boolean isNewCaseNoteNotYetSaved() {
-        return newCaseNoteNotYetSaved;
-    }
-
-    public void setNewCaseNoteNotYetSaved(boolean newCaseNoteNotYetSaved) {
-        this.newCaseNoteNotYetSaved = newCaseNoteNotYetSaved;
     }
 }

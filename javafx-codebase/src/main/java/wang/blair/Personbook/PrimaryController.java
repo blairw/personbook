@@ -78,13 +78,18 @@ public class PrimaryController {
         
         // process case notes
         this.suppressCaseNoteListener = true;
-        List<CaseNote> caseNotes = selectedPerson.getCaseNotes();
-        boolean caseNotesWereAdded = HelperForCaseNotesGUI.populateCaseNotes(caseNotes, choiceBoxForCaseNotes, txtCaseNotes);
+        choiceBoxForCaseNotes.setItems(selectedPerson.getCaseNotes());
         this.suppressCaseNoteListener = false;
+        
+        // respond to case notes processing
+        boolean caseNotesWereAdded = (selectedPerson.getCaseNotes().size() > 0);
+        choiceBoxForCaseNotes.setDisable(!caseNotesWereAdded);
+        txtCaseNotes.setDisable(!caseNotesWereAdded);
         if (caseNotesWereAdded) {
+            choiceBoxForCaseNotes.getSelectionModel().select(0);
             this.userDidSelectCaseNote(choiceBoxForCaseNotes.getSelectionModel().getSelectedItem());
         } else {
-            // this person has no case notes, so we need to reset this
+            txtCaseNotes.setText("");
             this.currentlySelectedCaseNote = null;
         }
         
@@ -133,9 +138,6 @@ public class PrimaryController {
     private void userDidCancelNewCaseNote() {
         this.setCaseNoteEditMode(false);
         
-        // disable save button for next case note
-        btnSaveCaseNote.setDisable(true);
-        
         if (null != currentlySelectedCaseNote) {
             this.userDidSelectCaseNote(currentlySelectedCaseNote);
         } else {
@@ -169,18 +171,28 @@ public class PrimaryController {
             myListView.refresh(); // show the new name already
         }
     }
+    @FXML
+    private void userDidClickSaveCaseNote() {
+        CaseNote newCaseNote = new CaseNote();
+        newCaseNote.setCaseNoteText(txtCaseNotes.getText());
+        this.currentlySelectedPerson.addCaseNote(newCaseNote);
+        
+        this.setCaseNoteEditMode(false);
+        
+        // change selection to new case note
+        choiceBoxForCaseNotes.setDisable(false); // there is now at least 1 case note, so this should not be disabled
+        choiceBoxForCaseNotes.getSelectionModel().select(newCaseNote);
+        this.userDidSelectCaseNote(newCaseNote);
+    }
     
     @FXML
     private void userDidUpdatePersonDetails() {
         HelperForJavafx.disableButtonIfTextIsBlank(btnSave, txtFullName.getText());
     }
-    
-    
     @FXML
     private void userDidUpdateActiveCaseNote() {
         HelperForJavafx.disableButtonIfTextIsBlank(btnSaveCaseNote, txtCaseNotes.getText());
     }
-    
     
     //
     // FUNCTIONALITIES
@@ -236,6 +248,11 @@ public class PrimaryController {
         // user should not be allowed to move between persons when in case note edit mode
         myListView.setDisable(isEditMode);
         txtCaseNotes.setDisable(!isEditMode);
+        
+        
+        if (!isEditMode) { 
+            btnSaveCaseNote.setDisable(true);
+        }
         
         HelperForJavafx.setTextboxEditable(txtCaseNotes, true);
     }

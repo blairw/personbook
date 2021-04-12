@@ -89,7 +89,7 @@
                               <ChoiceBox fx:id="choiceBoxForCaseNotes" prefHeight="25.0" prefWidth="250.0" />
                               <Button fx:id="btnNewCaseNote" mnemonicParsing="false" onAction="#userDidAddNewCaseNote" text="New" />
                               <Button fx:id="btnCancelNewCaseNote" mnemonicParsing="false" onAction="#userDidCancelNewCaseNote" text="Cancel" />
-                              <Button fx:id="btnSaveCaseNote" disable="true" mnemonicParsing="false" text="Save" />
+                              <Button fx:id="btnSaveCaseNote" disable="true" mnemonicParsing="false" onAction="#userDidClickSaveCaseNote" text="Save" />
                            </children>
                         </HBox>
                         <TextArea fx:id="txtCaseNotes" onKeyTyped="#userDidUpdateActiveCaseNote" promptText="Please enter case notes here." />

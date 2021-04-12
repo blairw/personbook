@@ -24,7 +24,9 @@ public class HelperForData {
         
         Person andrewBob = new Person("Andrew Bob");
         andrewBob.setBdayMonthDay(MonthDay.of(9, 25));
-        andrewBob.addCaseNote(new CaseNote("This case note was created at the time of program execution! :)"));
+        CaseNote cn = new CaseNote();
+        cn.setCaseNoteText("This case note was created at the time of program execution! :)");
+        andrewBob.addCaseNote(cn);
         people.add(andrewBob);
         
         

@@ -7,8 +7,8 @@ package wang.blair.Personbook;
 
 import java.time.MonthDay;
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -24,8 +24,7 @@ public class Person {
     private Year birthdayYear;
     
     // TIP: each Person starts with an empty list of case notes, rather than a null for the entire case notes property!
-    private List<CaseNote> caseNotes = new ArrayList<>();
-
+    private ObservableList<CaseNote> caseNotes = FXCollections.observableArrayList();
 
     @Override
     public String toString() {
@@ -75,7 +74,7 @@ public class Person {
         return birthdayYear;
     }
 
-    public List<CaseNote> getCaseNotes() {
+    public ObservableList<CaseNote> getCaseNotes() {
         return caseNotes;
     }
     
