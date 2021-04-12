@@ -52,6 +52,7 @@ public class PrimaryController {
         this.setupButtonIcons();
         this.setupSampleData();
         
+        // TIP-08: ToggleGroup
         ToggleGroup tgp = new ToggleGroup();
         tgp.getToggles().add(btnView);
         tgp.getToggles().add(btnEdit);
@@ -130,7 +131,7 @@ public class PrimaryController {
     @FXML
     private void userDidAddNewCaseNote() {
         txtCaseNotes.setText("");
-        txtCaseNotes.requestFocus();
+        txtCaseNotes.requestFocus(); // TIP-09: requestFocus()
         
         this.setCaseNoteEditMode(true);
     }
@@ -165,6 +166,7 @@ public class PrimaryController {
     
     @FXML
     private void userDidClickSave() {
+        // TIP-10: Outsourcing to HelperForPersonGUI
         boolean couldSaveSuccessfully = HelperForPersonGUI.updatePersonDetails(this.currentlySelectedPerson, txtFullName, txtBdayDay, txtBdayMonth, txtBdayYear, chkPersonal, chkBusiness);
             
         if (couldSaveSuccessfully) {

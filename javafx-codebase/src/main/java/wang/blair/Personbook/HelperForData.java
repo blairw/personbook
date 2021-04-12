@@ -24,6 +24,8 @@ public class HelperForData {
         
         Person andrewBob = new Person("Andrew Bob");
         andrewBob.setBdayMonthDay(MonthDay.of(9, 25));
+        
+        // TIP-07: CaseNotes automatically capture the time
         CaseNote cn = new CaseNote();
         cn.setCaseNoteText("This case note was created at the time of program execution! :)");
         andrewBob.addCaseNote(cn);
@@ -40,6 +42,7 @@ public class HelperForData {
         return people;
     }
     
+    // TIP-06: Alerts
     public static boolean trySetPersonBdayMonthDay(Person person, String monthString, String dayString) {
         boolean success = false;
         try {
@@ -87,6 +90,7 @@ public class HelperForData {
         return success;
     }
     
+    // TIP-05: MonthDay validation, demonstrating Exception handling
     public static MonthDay attemptToEstablishBirthdayFromStrings(String monthString, String dayString) throws NumberFormatException, DateTimeException {
         int monthInt = Integer.valueOf(monthString);
         int dayInt = Integer.valueOf(dayString);

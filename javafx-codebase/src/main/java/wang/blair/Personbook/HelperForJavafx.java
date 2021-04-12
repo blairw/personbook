@@ -22,6 +22,7 @@ import javafx.scene.image.ImageView;
  */
 public class HelperForJavafx {
     
+    // TIP-03: Button icons
     public static void setupIconForButton(ButtonBase btn, String iconName) {
         Image img = new Image(App.class.getResourceAsStream(iconName));
         ImageView imgView = new ImageView(img);
@@ -30,6 +31,7 @@ public class HelperForJavafx {
         btn.setGraphic(imgView);
     }
     
+    // TIP-04: Disabled but editable
     public static void setTextboxEditable(TextInputControl textInputControl, boolean isEditable) {
         textInputControl.setEditable(isEditable);
         
@@ -59,7 +61,7 @@ public class HelperForJavafx {
         }
     }
     
-    // TIP: This is needed to both set the item visible and reorganise layouts.
+    // TIP-01: This is needed to both set the item visible and reorganise layouts.
     // https://stackoverflow.com/questions/28558165/javafx-setvisible-hides-the-element-but-doesnt-rearrange-adjacent-nodes
     public static void setNodeHidden(Node node, boolean isHidden) {
         node.setVisible(!isHidden);
@@ -71,7 +73,7 @@ public class HelperForJavafx {
         }
     }
     
-    // TIP: do not allow empty full name!
+    // TIP-02: do not allow empty full name!
     // fancy blankness checker from https://stackoverflow.com/questions/3247067/how-do-i-check-that-a-java-string-is-not-all-whitespaces
     public static void disableButtonIfTextIsBlank(Button button, String text) {
         if (!text.trim().isEmpty()) {
