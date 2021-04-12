@@ -15,6 +15,7 @@ public class CaseNote {
     private LocalDateTime createTime;
     private String caseNoteText;
 
+    
     @Override
     public String toString() {
         return "Case Note " + HelperForData.formatLocalDateTime(createTime);

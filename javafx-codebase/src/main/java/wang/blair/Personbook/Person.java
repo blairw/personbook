@@ -47,6 +47,11 @@ public class Person {
         this.caseNotes.add(cn);
     }
     
+    public void sortCaseNotes() {
+        // TIP: sort reversed hence the -1, because we want newest on top
+        this.caseNotes.sort((c1, c2) -> -1 * c1.getCreateTime().compareTo(c2.getCreateTime()));
+    }
+    
     
     // ALL THE GETTERS
     

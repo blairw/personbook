@@ -78,6 +78,7 @@ public class PrimaryController {
         
         // process case notes
         this.suppressCaseNoteListener = true;
+        selectedPerson.sortCaseNotes();
         choiceBoxForCaseNotes.setItems(selectedPerson.getCaseNotes());
         this.suppressCaseNoteListener = false;
         
@@ -176,6 +177,7 @@ public class PrimaryController {
         CaseNote newCaseNote = new CaseNote();
         newCaseNote.setCaseNoteText(txtCaseNotes.getText());
         this.currentlySelectedPerson.addCaseNote(newCaseNote);
+        this.currentlySelectedPerson.sortCaseNotes();
         
         this.setCaseNoteEditMode(false);
         
