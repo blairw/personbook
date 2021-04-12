@@ -62,9 +62,6 @@ public class PrimaryController {
         // since View is selected by default
         this.setPersonDetailsEditMode(false);
         
-        // managed separately to Person details
-        HelperForJavafx.setTextboxEditable(txtCaseNotes, false);
-        
         myListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> userDidSelectListItem(newValue));
         choiceBoxForCaseNotes.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> userDidSelectCaseNote(newValue));
     }
@@ -93,6 +90,9 @@ public class PrimaryController {
             txtCaseNotes.setText("");
             this.currentlySelectedCaseNote = null;
         }
+        
+        // by default, cannot edit case notes
+        HelperForJavafx.setTextboxEditable(txtCaseNotes, false);
         
         // reset the change tracker
         this.changesMadeToPersonRecord = false;
