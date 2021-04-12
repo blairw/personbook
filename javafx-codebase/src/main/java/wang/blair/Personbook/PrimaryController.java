@@ -211,12 +211,11 @@ public class PrimaryController {
         HelperForJavafx.setTextboxesEditable(new TextField[]{txtFullName, txtBdayDay, txtBdayMonth, txtBdayYear}, isEditMode);
         HelperForJavafx.setNodesHidden(new Node[]{btnCancel, btnSave}, !isEditMode);
         
-        btnNewCaseNote.setDisable(isEditMode);
-        btnView.setDisable(isEditMode);
-        btnEdit.setDisable(isEditMode);
-        myListView.setDisable(isEditMode);
-        chkPersonal.setDisable(!isEditMode);
-        chkBusiness.setDisable(!isEditMode);
+        // set disable/enable for nodes
+        Node[] nodesToDisableIffEditing = {btnNewCaseNote, btnView, btnEdit, myListView};
+        Node[] nodesToEnableIffEditing = {chkPersonal, chkBusiness};
+        HelperForJavafx.setNodesDisabled(nodesToDisableIffEditing, isEditMode);
+        HelperForJavafx.setNodesDisabled(nodesToEnableIffEditing, !isEditMode);
         
         // behaviour only required when entering edit mode
         txtFullName.requestFocus();

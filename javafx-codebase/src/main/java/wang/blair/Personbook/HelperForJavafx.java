@@ -53,6 +53,12 @@ public class HelperForJavafx {
         alert.show();
     }
     
+    public static void setNodesDisabled(Node[] nodes, boolean isDisabled) {
+        for (Node node : nodes) {
+            node.setDisable(isDisabled);
+        }
+    }
+    
     // TIP: This is needed to both set the item visible and reorganise layouts.
     // https://stackoverflow.com/questions/28558165/javafx-setvisible-hides-the-element-but-doesnt-rearrange-adjacent-nodes
     public static void setNodeHidden(Node node, boolean isHidden) {
@@ -73,6 +79,5 @@ public class HelperForJavafx {
         } else {
             button.setDisable(true);
         }
-        
     }
 }
