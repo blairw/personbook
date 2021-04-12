@@ -100,6 +100,10 @@ public class PrimaryController {
             txtBdayYear.setText("");
         }
         
+        // personal and business checkboxes
+        chkPersonal.setSelected(selectedPerson.isImportantPersonal());
+        chkBusiness.setSelected(selectedPerson.isImportantBusiness());
+        
         // process case notes
         this.suppressCaseNoteListener = true;
         List<CaseNote> caseNotes = selectedPerson.getCaseNotes();
@@ -202,6 +206,10 @@ public class PrimaryController {
         if (!yearString.trim().isEmpty()) {
             pleaseContinue = HelperForData.trySetPersonBdayYear(currentlySelectedPerson, yearString);
         }
+        
+        
+        this.currentlySelectedPerson.setImportantPersonal(chkPersonal.isSelected());
+        this.currentlySelectedPerson.setImportantBusiness(chkBusiness.isSelected());
         
         // save
         if (pleaseContinue) {    

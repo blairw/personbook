@@ -17,8 +17,8 @@ import java.util.List;
 public class Person {
     
     private String fullName;
-    private boolean importantPersonal;
-    private boolean importantBusiness;
+    private boolean importantPersonal = false;
+    private boolean importantBusiness = false;
     private boolean newContactNotYetSaved = false;
     private MonthDay bdayMonthDay;
     private Year birthdayYear;
