@@ -74,9 +74,6 @@ public class PrimaryController {
 
     @FXML
     private void userDidSelectListItem(Person selectedPerson) {
-        // if save button was visible from before, it should be invisible now
-        HelperForJavafx.setNodeHidden(btnSave, true);
-        
         // set name if available
         // TIP: always do null != <value to check> rather than the other way around!
         if (null != selectedPerson.getFullName()) {
@@ -173,6 +170,9 @@ public class PrimaryController {
     @FXML
     private void userDidClickCancel() {
         this.setPersonDetailsEditMode(false);
+        
+        // discard any changes made, by re-loading the selected person.
+        this.userDidSelectListItem(this.currentlySelectedPerson);
         
         if (this.currentlySelectedPerson.isNewContactNotYetSaved()) {
             myListView.getItems().remove(currentlySelectedPerson);
