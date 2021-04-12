@@ -74,35 +74,7 @@ public class PrimaryController {
 
     @FXML
     private void userDidSelectListItem(Person selectedPerson) {
-        // set name if available
-        // TIP: always do null != <value to check> rather than the other way around!
-        if (null != selectedPerson.getFullName()) {
-            txtFullName.setText(selectedPerson.getFullName());
-        } else {
-            txtFullName.setText("");
-        }
-        
-        // set birthday MonthDay if available.
-        if (null != selectedPerson.getBdayMonthDay()) {
-            // TIP: to quickly convert an int to a string without too much fuss, concatenate with an empty string
-            txtBdayDay.setText("" + selectedPerson.getBdayMonthDay().getDayOfMonth());
-            txtBdayMonth.setText("" + selectedPerson.getBdayMonthDay().getMonthValue());
-        } else {
-            txtBdayDay.setText("");
-            txtBdayMonth.setText("");
-        }
-        
-        
-        // set birthday year if available.
-        if (null != selectedPerson.getBirthdayYear()) {
-            txtBdayYear.setText("" + selectedPerson.getBirthdayYear());
-        } else {
-            txtBdayYear.setText("");
-        }
-        
-        // personal and business checkboxes
-        chkPersonal.setSelected(selectedPerson.isImportantPersonal());
-        chkBusiness.setSelected(selectedPerson.isImportantBusiness());
+        HelperForPersonGUI.populatePersonDetails(selectedPerson, txtFullName, txtBdayDay, txtBdayMonth, txtBdayYear, chkPersonal, chkBusiness);
         
         // process case notes
         this.suppressCaseNoteListener = true;
@@ -190,36 +162,10 @@ public class PrimaryController {
     
     @FXML
     private void userDidClickSave() {
-        System.out.println("userDidClickSave()");
-        // `pleaseContinue` boolean will block further progress if deactivated
-        boolean pleaseContinue = true;
-        
-        // try set birthday; if bad birthday is set, prevent further progress
-        String monthString = txtBdayMonth.getText();
-        String dayString = txtBdayDay.getText();
-        if (!monthString.trim().isEmpty() || !dayString.trim().isEmpty()) {
-            pleaseContinue = HelperForData.trySetPersonBdayMonthDay(currentlySelectedPerson, monthString, dayString);
-        }
-        
-        // try set birth year; if bad birth year is set, prevent further progress
-        String yearString = txtBdayYear.getText();
-        if (!yearString.trim().isEmpty()) {
-            pleaseContinue = HelperForData.trySetPersonBdayYear(currentlySelectedPerson, yearString);
-        }
-        
-        
-        this.currentlySelectedPerson.setImportantPersonal(chkPersonal.isSelected());
-        this.currentlySelectedPerson.setImportantBusiness(chkBusiness.isSelected());
-        
-        // save
-        if (pleaseContinue) {    
-            this.currentlySelectedPerson.setFullName(txtFullName.getText());
+        boolean couldSaveSuccessfully = HelperForPersonGUI.updatePersonDetails(this.currentlySelectedPerson, txtFullName, txtBdayDay, txtBdayMonth, txtBdayYear, chkPersonal, chkBusiness);
             
+        if (couldSaveSuccessfully) {
             this.setPersonDetailsEditMode(false);
-            if (this.currentlySelectedPerson.isNewContactNotYetSaved()) {
-                this.currentlySelectedPerson.setNewContactNotYetSaved(false);
-            }
-            
             myListView.refresh(); // show the new name already
         }
     }
