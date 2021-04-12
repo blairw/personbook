@@ -5,8 +5,10 @@
  */
 package wang.blair.Personbook;
 
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.MonthDay;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,68 @@ public class HelperForData {
         people.add(new Person("Michael Noland"));
         
         return people;
+    }
+    
+    public static boolean trySetPersonBdayMonthDay(Person person, String monthString, String dayString) {
+        boolean success = false;
+        try {
+            MonthDay bdayMonthDay = HelperForData.attemptToEstablishBirthdayFromStrings(monthString, dayString);
+            person.setBdayMonthDay(bdayMonthDay);
+            success = true;
+        } catch (NumberFormatException nfe) {
+            HelperForJavafx.alertDataEntryError(
+                "We were not able to figure out this person's birthday based on the entered Month and Day."
+                + " Please confirm that the entered Month and Day are both numbers."
+            );
+            success = false;
+        } catch (DateTimeException dte) {
+            HelperForJavafx.alertDataEntryError(
+                "We were not able to figure out this person's birthday based on the entered Month and Day."
+                + " Please confirm that the entered Month and Day match with an actual calendar Month and Day."
+            );
+            success = false;
+        }
+        
+        return success;
+    }
+    
+    public static boolean trySetPersonBdayYear(Person person, String yearString) {
+        boolean success = false;
+        
+        try {
+            Year bdayYear = HelperForData.attemptToEstablishBirthYearFromString(yearString);
+            person.setBirthdayYear(bdayYear);
+            success = true;
+        } catch (NumberFormatException nfe) {
+            HelperForJavafx.alertDataEntryError(
+                "We were not able to figure out this person's birth year based on the entered Year."
+                + " Please confirm that the entered Year is a number."
+            );
+            success = false;
+        } catch (DateTimeException dte) {
+            HelperForJavafx.alertDataEntryError(
+                "We were not able to figure out this person's birth year based on the entered Year."
+                + " Please confirm that the entered Year matches with an actual calendar Year."
+            );
+            success = false;
+        }
+        
+        return success;
+    }
+    
+    public static MonthDay attemptToEstablishBirthdayFromStrings(String monthString, String dayString) throws NumberFormatException, DateTimeException {
+        int monthInt = Integer.valueOf(monthString);
+        int dayInt = Integer.valueOf(dayString);
+        
+        MonthDay bdayMonthDay = MonthDay.of(monthInt, dayInt);
+        return bdayMonthDay;
+    }
+    
+    public static Year attemptToEstablishBirthYearFromString(String yearString) throws NumberFormatException, DateTimeException {
+        int yearInt = Integer.valueOf(yearString);
+        
+        Year bdayYear = Year.of(yearInt);
+        return bdayYear;
     }
     
     public static String formatLocalDateTime(LocalDateTime ldt) {

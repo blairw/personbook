@@ -45,20 +45,12 @@ public class HelperForJavafx {
         }
     }
     
-    public static boolean confirmDiscardEditChanges() {
-        boolean preparedReturn = false;
-        
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("You are currently editing a new person's record.");
-        alert.setHeaderText("You are currently editing a new person's record.");
-        alert.setContentText("If you leave now, your edits will be discarded. Are you sure you want to continue?");
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            preparedReturn = true;
-        }
-        
-        return preparedReturn;
+    public static void alertDataEntryError(String errorText) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Data entry error");
+        alert.setHeaderText("Data entry error");
+        alert.setContentText(errorText);
+        alert.show();
     }
     
     // TIP: This is needed to both set the item visible and reorganise layouts.

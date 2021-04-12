@@ -1,6 +1,11 @@
 package wang.blair.Personbook;
 
+import java.time.DateTimeException;
+import java.time.MonthDay;
+import java.time.Year;
 import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -33,6 +38,8 @@ public class PrimaryController {
     @FXML public CheckBox chkPersonal;
     @FXML public CheckBox chkBusiness;
     @FXML public ChoiceBox<CaseNote> choiceBoxForCaseNotes;
+    
+    public ObservableList<Person> people = FXCollections.observableArrayList(HelperForData.generateSamplePersonRecords());
     
     public Person currentlySelectedPerson;
     public CaseNote currentlySelectedCaseNote;
@@ -88,6 +95,14 @@ public class PrimaryController {
             txtBdayMonth.setText("");
         }
         
+        
+        // set birthday year if available.
+        if (null != selectedPerson.getBirthdayYear()) {
+            txtBdayYear.setText("" + selectedPerson.getBirthdayYear());
+        } else {
+            txtBdayYear.setText("");
+        }
+        
         // process case notes
         this.suppressCaseNoteListener = true;
         List<CaseNote> caseNotes = selectedPerson.getCaseNotes();
@@ -125,7 +140,7 @@ public class PrimaryController {
     @FXML
     private void userDidClickNew() {
         Person person = new Person();
-        myListView.getItems().add(person);
+        this.people.add(person);
         myListView.getSelectionModel().select(person);
         
         btnEdit.setSelected(true);
@@ -159,10 +174,6 @@ public class PrimaryController {
     private void userDidClickCancel() {
         this.setPersonDetailsEditMode(false);
         
-        // disable save button for next edit mode
-        btnSave.setDisable(true);
-        btnView.setSelected(true);
-        
         if (this.currentlySelectedPerson.isNewContactNotYetSaved()) {
             myListView.getItems().remove(currentlySelectedPerson);
         }
@@ -174,7 +185,39 @@ public class PrimaryController {
     }
     
     @FXML
-    private void userDidUpdateFullName() {
+    private void userDidClickSave() {
+        System.out.println("userDidClickSave()");
+        // `pleaseContinue` boolean will block further progress if deactivated
+        boolean pleaseContinue = true;
+        
+        // try set birthday; if bad birthday is set, prevent further progress
+        String monthString = txtBdayMonth.getText();
+        String dayString = txtBdayDay.getText();
+        if (!monthString.trim().isEmpty() || !dayString.trim().isEmpty()) {
+            pleaseContinue = HelperForData.trySetPersonBdayMonthDay(currentlySelectedPerson, monthString, dayString);
+        }
+        
+        // try set birth year; if bad birth year is set, prevent further progress
+        String yearString = txtBdayYear.getText();
+        if (!yearString.trim().isEmpty()) {
+            pleaseContinue = HelperForData.trySetPersonBdayYear(currentlySelectedPerson, yearString);
+        }
+        
+        // save
+        if (pleaseContinue) {    
+            this.currentlySelectedPerson.setFullName(txtFullName.getText());
+            
+            this.setPersonDetailsEditMode(false);
+            if (this.currentlySelectedPerson.isNewContactNotYetSaved()) {
+                this.currentlySelectedPerson.setNewContactNotYetSaved(false);
+            }
+            
+            myListView.refresh(); // show the new name already
+        }
+    }
+    
+    @FXML
+    private void userDidUpdatePersonDetails() {
         HelperForJavafx.disableButtonIfTextIsBlank(btnSave, txtFullName.getText());
     }
     
@@ -202,16 +245,12 @@ public class PrimaryController {
     
     private void setupSampleData() {
         // add all the things
-        List<Person> people = HelperForData.generateSamplePersonRecords();
-        
-        for (Person p : people) {
-            myListView.getItems().add(p);
-        }
+        myListView.setItems(this.people);
         
         // select the first person by default
         // we can assume there is a first person since we just populated above!
         myListView.getSelectionModel().select(0);
-        this.userDidSelectListItem(people.get(0));
+        this.userDidSelectListItem(this.people.get(0));
     }
     
     private void setPersonDetailsEditMode(boolean isEditMode) {
@@ -224,6 +263,16 @@ public class PrimaryController {
         myListView.setDisable(isEditMode);
         chkPersonal.setDisable(!isEditMode);
         chkBusiness.setDisable(!isEditMode);
+        
+        // behaviour only required when entering edit mode
+        txtFullName.requestFocus();
+        
+        // behaviour only required when exiting edit mode
+        if (!isEditMode) {
+            System.out.println("!isEditMode");
+            btnSave.setDisable(true);  // disable save button for next edit mode
+            btnView.setSelected(true);
+        }
     }
     
     private void setCaseNoteEditMode(boolean isEditMode) {

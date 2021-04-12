@@ -44,7 +44,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="txtFullName" editable="false" onKeyTyped="#userDidUpdateFullName" />
+                        <TextField fx:id="txtFullName" editable="false" onKeyTyped="#userDidUpdatePersonDetails" />
                      </children>
                   </VBox>
                   <VBox spacing="10.0">
@@ -56,11 +56,11 @@
                         </Label>
                         <FlowPane hgap="10.0">
                            <children>
-                              <TextField fx:id="txtBdayDay" editable="false" prefHeight="26.0" prefWidth="60.0" />
+                              <TextField fx:id="txtBdayDay" editable="false" onKeyTyped="#userDidUpdatePersonDetails" prefHeight="26.0" prefWidth="60.0" />
                               <Label text="(day)" />
-                              <TextField fx:id="txtBdayMonth" editable="false" prefHeight="26.0" prefWidth="60.0" />
+                              <TextField fx:id="txtBdayMonth" editable="false" onKeyTyped="#userDidUpdatePersonDetails" prefHeight="26.0" prefWidth="60.0" />
                               <Label text="(month)" />
-                              <TextField fx:id="txtBdayYear" editable="false" prefHeight="26.0" prefWidth="60.0" />
+                              <TextField fx:id="txtBdayYear" editable="false" onKeyTyped="#userDidUpdatePersonDetails" prefHeight="26.0" prefWidth="60.0" />
                               <Label text="(year)" />
                            </children>
                         </FlowPane>
@@ -108,7 +108,7 @@
                   <ToggleButton fx:id="btnEdit" mnemonicParsing="false" onAction="#userDidClickEdit" text="Edit" />
                   <Separator orientation="VERTICAL" />
                   <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#userDidClickCancel" text="Cancel" />
-                  <Button fx:id="btnSave" disable="true" mnemonicParsing="false" onAction="#userDidClickNew" text="Save" />
+                  <Button fx:id="btnSave" disable="true" mnemonicParsing="false" onAction="#userDidClickSave" text="Save" />
                </items>
             </ToolBar>
          </top>
