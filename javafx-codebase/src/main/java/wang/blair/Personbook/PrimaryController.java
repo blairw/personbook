@@ -78,17 +78,27 @@ public class PrimaryController {
             txtFullName.setText("");
         }
         
+        // set birthday MonthDay if available.
+        if (null != selectedPerson.getBdayMonthDay()) {
+            // TIP: to quickly convert an int to a string without too much fuss, concatenate with an empty string
+            txtBdayDay.setText("" + selectedPerson.getBdayMonthDay().getDayOfMonth());
+            txtBdayMonth.setText("" + selectedPerson.getBdayMonthDay().getMonthValue());
+        } else {
+            txtBdayDay.setText("");
+            txtBdayMonth.setText("");
+        }
+        
         // process case notes
         this.suppressCaseNoteListener = true;
         List<CaseNote> caseNotes = selectedPerson.getCaseNotes();
         boolean caseNotesWereAdded = HelperForCaseNotesGUI.populateCaseNotes(caseNotes, choiceBoxForCaseNotes, txtCaseNotes);
+        this.suppressCaseNoteListener = false;
         if (caseNotesWereAdded) {
-            this.changeSelectionToCaseNote(choiceBoxForCaseNotes.getSelectionModel().getSelectedItem());
+            this.userDidSelectCaseNote(choiceBoxForCaseNotes.getSelectionModel().getSelectedItem());
         } else {
             // this person has no case notes, so we need to reset this
             this.currentlySelectedCaseNote = null;
         }
-        this.suppressCaseNoteListener = false;
         
         // reset the change tracker
         this.changesMadeToPersonRecord = false;
@@ -100,7 +110,14 @@ public class PrimaryController {
     @FXML
     private void userDidSelectCaseNote(CaseNote selectedCaseNote) {
         if (!suppressCaseNoteListener) {
-            this.changeSelectionToCaseNote(selectedCaseNote);
+            // if save button was visible from before, it should be invisible now
+            HelperForJavafx.setNodeHidden(btnSaveCaseNote, true);
+
+            // populate case note text
+            txtCaseNotes.setText(selectedCaseNote.getCaseNoteText());
+
+            // finally, update the selection tracker
+            this.currentlySelectedCaseNote = selectedCaseNote;
         }
     }
     
@@ -132,7 +149,7 @@ public class PrimaryController {
         btnSaveCaseNote.setDisable(true);
         
         if (null != currentlySelectedCaseNote) {
-            this.changeSelectionToCaseNote(currentlySelectedCaseNote);
+            this.userDidSelectCaseNote(currentlySelectedCaseNote);
         } else {
             txtCaseNotes.setText("");
         }
@@ -195,18 +212,6 @@ public class PrimaryController {
         // we can assume there is a first person since we just populated above!
         myListView.getSelectionModel().select(0);
         this.userDidSelectListItem(people.get(0));
-    }
-   
-    
-    private void changeSelectionToCaseNote(CaseNote selectedCaseNote) {
-        // if save button was visible from before, it should be invisible now
-        HelperForJavafx.setNodeHidden(btnSaveCaseNote, true);
-
-        // populate case note text
-        txtCaseNotes.setText(selectedCaseNote.getCaseNoteText());
-        
-        // finally, update the selection tracker
-        this.currentlySelectedCaseNote = selectedCaseNote;
     }
     
     private void setPersonDetailsEditMode(boolean isEditMode) {

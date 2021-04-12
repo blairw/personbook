@@ -6,6 +6,7 @@
 package wang.blair.Personbook;
 
 import java.time.LocalDateTime;
+import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +20,13 @@ public class HelperForData {
         List<Person> people = new ArrayList<>();
         
         
+        Person andrewBob = new Person("Andrew Bob");
+        andrewBob.setBdayMonthDay(MonthDay.of(9, 25));
+        andrewBob.addCaseNote(new CaseNote("This case note was created at the time of program execution! :)"));
+        people.add(andrewBob);
+        
+        
         people.add(new Person("Charlie Dennis"));
-        
-        Person person2 = new Person("Andrew Bob");
-        person2.addCaseNote(new CaseNote("This case note was created at the time of program execution! :)"));
-        people.add(person2);
-        
         people.add(new Person("Evan Foucault"));
         people.add(new Person("Gary Habermas"));
         people.add(new Person("Ivan Jung"));
